@@ -5,80 +5,218 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>J.A.R.V.I.S — the AI agent that writes its own skills</title>
 <meta name="description" content="A private, local, voice-driven macOS AI agent with a film-grade HUD, real laptop control, live world/tech intelligence, and a Self-Growing Skill Forge.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
 <style>
-  :root{--bg:#050308;--ink:#cbb7e6;--bright:#f3eaff;--acc:#a855f7;--acc2:#c084fc;--line:rgba(168,85,247,.22)}
+  :root{--bg:#050308;--ink:#cbb7e6;--bright:#f3eaff;--acc:#a855f7;--acc2:#c084fc;--acc3:#e879f9;--line:rgba(168,85,247,.22)}
   *{box-sizing:border-box;margin:0}
-  body{background:radial-gradient(1100px 760px at 50% -8%,#1a0b2e,#0b0616 46%,#050308 82%) fixed;color:var(--ink);font-family:ui-monospace,"JetBrains Mono",Menlo,monospace;line-height:1.6;-webkit-font-smoothing:antialiased}
-  .grid{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.25;background-image:linear-gradient(rgba(168,85,247,.1) 1px,transparent 1px),linear-gradient(90deg,rgba(168,85,247,.1) 1px,transparent 1px);background-size:46px 46px;mask-image:radial-gradient(circle at 50% 30%,#000 24%,transparent 78%)}
-  .wrap{position:relative;z-index:1;max-width:920px;margin:0 auto;padding:0 22px}
-  header{text-align:center;padding:90px 0 50px}
-  .badge{display:inline-block;border:1px solid var(--line);border-radius:999px;padding:6px 14px;font-size:12px;letter-spacing:.2em;color:var(--acc2);margin-bottom:24px}
-  h1{font-size:clamp(34px,6vw,60px);color:var(--bright);letter-spacing:.06em;line-height:1.1;margin-bottom:14px;font-weight:700}
-  .tag{font-size:clamp(15px,2.4vw,20px);color:var(--ink);max-width:680px;margin:0 auto 30px}
+  html{scroll-behavior:smooth}
+  body{background:var(--bg);color:var(--ink);font-family:"JetBrains Mono",ui-monospace,Menlo,monospace;line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+  /* moving grid + drifting glow */
+  .grid{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.22;background-image:linear-gradient(rgba(168,85,247,.12) 1px,transparent 1px),linear-gradient(90deg,rgba(168,85,247,.12) 1px,transparent 1px);background-size:48px 48px;mask-image:radial-gradient(circle at 50% 26%,#000 22%,transparent 76%);animation:drift 40s linear infinite}
+  @keyframes drift{to{background-position:480px 480px}}
+  .aura{position:fixed;z-index:0;width:60vw;height:60vw;border-radius:50%;filter:blur(120px);pointer-events:none;opacity:.5}
+  .aura.a{background:radial-gradient(circle,#7c3aed55,transparent 70%);top:-15vw;left:-10vw;animation:float1 18s ease-in-out infinite}
+  .aura.b{background:radial-gradient(circle,#e879f933,transparent 70%);bottom:-20vw;right:-12vw;animation:float2 22s ease-in-out infinite}
+  @keyframes float1{50%{transform:translate(8vw,6vw)}}
+  @keyframes float2{50%{transform:translate(-6vw,-5vw)}}
+  /* scanline overlay */
+  .scan{position:fixed;inset:0;z-index:2;pointer-events:none;opacity:.35;background:repeating-linear-gradient(0deg,transparent 0,transparent 2px,rgba(0,0,0,.18) 3px,transparent 4px)}
+  .wrap{position:relative;z-index:3;max-width:980px;margin:0 auto;padding:0 22px}
+
+  /* hero */
+  header{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;position:relative}
+  #reactor{width:340px;height:340px;max-width:78vw;margin-bottom:8px;filter:drop-shadow(0 0 40px rgba(168,85,247,.35))}
+  .badge{display:inline-block;border:1px solid var(--line);border-radius:999px;padding:6px 16px;font-size:11.5px;letter-spacing:.28em;color:var(--acc2);margin-bottom:22px;background:rgba(20,10,34,.5);backdrop-filter:blur(6px)}
+  h1{font-family:"Space Grotesk",sans-serif;font-size:clamp(44px,9vw,104px);letter-spacing:.04em;line-height:.95;margin-bottom:18px;font-weight:700;
+     background:linear-gradient(120deg,#fff,var(--acc2) 45%,var(--acc3));-webkit-background-clip:text;background-clip:text;color:transparent;
+     filter:drop-shadow(0 0 26px rgba(168,85,247,.35));animation:glow 4s ease-in-out infinite}
+  @keyframes glow{50%{filter:drop-shadow(0 0 40px rgba(232,121,249,.5))}}
+  .tag{font-size:clamp(15px,2.3vw,19px);color:var(--ink);max-width:660px;margin:0 auto 30px}
+  .tag b{color:var(--bright)}
   .cta{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
-  .btn{border:1px solid var(--acc);border-radius:10px;padding:12px 22px;color:#0a0414;background:linear-gradient(180deg,var(--acc2),var(--acc));text-decoration:none;font-weight:700;letter-spacing:.05em;box-shadow:0 0 24px rgba(168,85,247,.4)}
+  .btn{border:1px solid var(--acc);border-radius:11px;padding:13px 24px;color:#0a0414;background:linear-gradient(180deg,var(--acc2),var(--acc));text-decoration:none;font-weight:700;letter-spacing:.04em;box-shadow:0 0 26px rgba(168,85,247,.45);transition:transform .15s,box-shadow .15s}
+  .btn:hover{transform:translateY(-2px);box-shadow:0 0 40px rgba(232,121,249,.6)}
   .btn.ghost{background:rgba(20,10,34,.6);color:var(--bright);box-shadow:none}
-  .orb{width:200px;height:200px;margin:48px auto 0;border-radius:50%;background:radial-gradient(circle at 50% 45%,#f3eaff,var(--acc2) 32%,var(--acc) 60%,transparent 75%);box-shadow:0 0 90px rgba(168,85,247,.55);animation:breathe 4s ease-in-out infinite}
-  @keyframes breathe{0%,100%{transform:scale(1);opacity:.92}50%{transform:scale(1.05);opacity:1}}
-  section{padding:46px 0;border-top:1px solid var(--line)}
-  h2{color:var(--bright);font-size:13px;letter-spacing:.34em;margin-bottom:22px;font-weight:600}
-  .grid3{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
-  .card{border:1px solid var(--line);border-radius:14px;background:rgba(20,10,34,.45);backdrop-filter:blur(8px);padding:18px 20px}
-  .card h3{color:var(--acc2);font-size:15px;margin-bottom:8px}
-  .card p{font-size:14px;color:var(--ink)}
-  .star{border-color:rgba(168,85,247,.5);box-shadow:0 0 30px rgba(168,85,247,.18)}
-  pre{border:1px solid var(--line);border-radius:12px;background:rgba(2,7,10,.65);padding:16px;overflow:auto;color:var(--bright);font-size:13px}
-  .steps{counter-reset:s;list-style:none;padding:0}
-  .steps li{position:relative;padding:10px 0 10px 38px;font-size:14px}
-  .steps li::before{counter-increment:s;content:counter(s);position:absolute;left:0;top:8px;width:24px;height:24px;border-radius:50%;border:1px solid var(--acc);color:var(--acc2);display:grid;place-items:center;font-size:12px}
-  footer{text-align:center;padding:50px 0;color:#7a6a9c;font-size:13px}
+  .btn.ghost:hover{border-color:var(--acc3)}
+  .scrollhint{position:absolute;bottom:26px;left:50%;transform:translateX(-50%);color:#6b5a8c;font-size:11px;letter-spacing:.3em;animation:bob 2s ease-in-out infinite}
+  @keyframes bob{50%{transform:translate(-50%,6px)}}
+
+  /* reveal on scroll */
+  .reveal{opacity:0;transform:translateY(22px);transition:opacity .7s,transform .7s}
+  .reveal.in{opacity:1;transform:none}
+  section{padding:64px 0;position:relative}
+  .eyebrow{color:var(--acc2);font-size:12px;letter-spacing:.34em;margin-bottom:8px}
+  .h2{font-family:"Space Grotesk",sans-serif;color:var(--bright);font-size:clamp(24px,4vw,38px);font-weight:700;letter-spacing:.01em;margin-bottom:26px}
+
+  /* forge terminal */
+  .term{border:1px solid var(--line);border-radius:14px;background:rgba(8,4,16,.8);backdrop-filter:blur(8px);overflow:hidden;box-shadow:0 0 50px rgba(124,58,237,.18)}
+  .term .bar{display:flex;gap:7px;align-items:center;padding:11px 14px;border-bottom:1px solid var(--line);background:rgba(20,10,34,.6)}
+  .dot{width:11px;height:11px;border-radius:50%}.d1{background:#ff5f57}.d2{background:#febc2e}.d3{background:#28c840}
+  .term .ttl{margin-left:10px;color:#7a6a9c;font-size:12px;letter-spacing:.1em}
+  .term .body{padding:18px 18px 22px;font-size:14px;min-height:188px}
+  .term .line{margin:4px 0;white-space:pre-wrap}
+  .you{color:#9fe9d2}.jv{color:var(--bright)}.sys{color:var(--acc2)}.dim{color:#7a6a9c}
+  .cursor{display:inline-block;width:9px;height:16px;background:var(--acc3);vertical-align:-3px;animation:blink 1s steps(1) infinite;margin-left:2px}
+  @keyframes blink{50%{opacity:0}}
+
+  /* feature grid */
+  .grid3{display:grid;grid-template-columns:repeat(auto-fit,minmax(248px,1fr));gap:16px}
+  .card{border:1px solid var(--line);border-radius:16px;background:rgba(20,10,34,.4);backdrop-filter:blur(8px);padding:20px 22px;transition:transform .18s,border-color .18s,box-shadow .18s;position:relative;overflow:hidden}
+  .card:hover{transform:translateY(-4px);border-color:rgba(232,121,249,.55);box-shadow:0 14px 40px rgba(124,58,237,.25)}
+  .card::after{content:"";position:absolute;inset:0;background:radial-gradient(400px circle at var(--mx,50%) var(--my,0%),rgba(232,121,249,.12),transparent 60%);opacity:0;transition:opacity .2s}
+  .card:hover::after{opacity:1}
+  .card h3{color:var(--acc2);font-size:15.5px;margin-bottom:8px;position:relative}
+  .card p{font-size:13.5px;color:var(--ink);position:relative}
+  .star{border-color:rgba(232,121,249,.5);box-shadow:0 0 34px rgba(232,121,249,.16)}
+
+  pre{border:1px solid var(--line);border-radius:12px;background:rgba(2,7,10,.7);padding:16px;overflow:auto;color:var(--bright);font-size:13px;line-height:1.7}
+  .steps{counter-reset:s;list-style:none;padding:0;margin-top:18px}
+  .steps li{position:relative;padding:10px 0 10px 40px;font-size:14px}
+  .steps li::before{counter-increment:s;content:counter(s);position:absolute;left:0;top:7px;width:26px;height:26px;border-radius:50%;border:1px solid var(--acc);color:var(--acc2);display:grid;place-items:center;font-size:12px;background:rgba(20,10,34,.6)}
+  .note{font-size:13px;color:#9d86c4;border-left:2px solid var(--acc);padding-left:14px;margin-top:22px}
+  footer{text-align:center;padding:54px 0;color:#6b5a8c;font-size:13px;border-top:1px solid var(--line)}
   a{color:var(--acc2)}
-  .note{font-size:13px;color:#9d86c4;border-left:2px solid var(--acc);padding-left:12px;margin-top:18px}
 </style>
 </head>
 <body>
 <div class="grid"></div>
+<div class="aura a"></div><div class="aura b"></div>
+<div class="scan"></div>
+
 <div class="wrap">
   <header>
+    <canvas id="reactor" width="680" height="680"></canvas>
     <div class="badge">LOCAL · VOICE-DRIVEN · SELF-GROWING</div>
     <h1>J.A.R.V.I.S</h1>
-    <p class="tag">A private macOS AI agent with a film-grade HUD, real laptop control, live world &amp; tech intelligence — and the one thing no other Jarvis has: it <strong>writes its own new skills</strong>.</p>
+    <p class="tag">A private macOS AI agent with a film-grade HUD, real laptop control, and live world &amp; tech intelligence — and the one thing no other Jarvis has: it <b>writes its own new skills</b>.</p>
     <div class="cta">
       <a class="btn" href="https://github.com/rithick007/jarvis">View on GitHub</a>
       <a class="btn ghost" href="#run">Run it locally</a>
     </div>
-    <div class="orb"></div>
+    <div class="scrollhint">▼ SCROLL</div>
   </header>
 
-  <section>
-    <h2>WHAT MAKES IT DIFFERENT</h2>
+  <section class="reveal">
+    <div class="eyebrow">THE SIGNATURE</div>
+    <div class="h2">It writes its own skills.</div>
+    <div class="term">
+      <div class="bar"><span class="dot d1"></span><span class="dot d2"></span><span class="dot d3"></span><span class="ttl">jarvis · skill forge</span></div>
+      <div class="body" id="forge"></div>
+    </div>
+    <p class="note">Generate → verify (AST safety scan + sandbox) → you approve → it's saved forever. Every install becomes unique.</p>
+  </section>
+
+  <section class="reveal">
+    <div class="eyebrow">WHAT IT DOES</div>
+    <div class="h2">A real agent, not a chatbot.</div>
     <div class="grid3">
-      <div class="card star"><h3>★ Self-Growing Skill Forge</h3><p>Ask it to "learn to…" something it can't do. It writes the code, runs a deterministic safety scan + sandbox test, asks you to approve, then keeps the skill forever. Every install becomes unique.</p></div>
-      <div class="card"><h3>Real laptop control</h3><p>Opens and operates apps, controls volume/brightness/media, searches the web, and reads &amp; clicks any app through the macOS Accessibility tree — behind a tiered safety layer.</p></div>
-      <div class="card"><h3>Voice-first HUD</h3><p>A reactive command center: speak naturally, watch a live system log, and surface world news or the daily AI feed on demand.</p></div>
-      <div class="card"><h3>World &amp; tech intelligence</h3><p>Live global news, war/economy, Indian markets, plus a daily AI digest from Reddit, Hacker News, arXiv and YouTube — summarized by the model.</p></div>
-      <div class="card"><h3>Resilient free brain</h3><p>Rotates across Groq → Cerebras → OpenRouter → Gemini (all free tiers) with a browser fallback, so it keeps going when any provider throttles.</p></div>
-      <div class="card"><h3>Safe by construction</h3><p>Scoped folders, preview + one-tap confirm, Trash-only deletes, undo, and a static scanner gating every line of forged code.</p></div>
+      <div class="card star"><h3>★ Self-Growing Skill Forge</h3><p>Ask it to "learn to…" something. It writes the code, safety-checks it, asks you, then keeps it forever.</p></div>
+      <div class="card"><h3>Real laptop control</h3><p>Opens and operates apps, volume, media, the web, and reads &amp; clicks any app via the macOS accessibility tree.</p></div>
+      <div class="card"><h3>Voice-first HUD</h3><p>A reactive command center — speak naturally, watch a live system log, surface news or the AI feed on demand.</p></div>
+      <div class="card"><h3>World &amp; tech intel</h3><p>Live global news, markets, Indian economy, and a daily AI digest from Reddit, HN, arXiv and YouTube.</p></div>
+      <div class="card"><h3>Resilient free brain</h3><p>Rotates Groq → Cerebras → OpenRouter → Gemini so it keeps going when any provider throttles.</p></div>
+      <div class="card"><h3>Safe by construction</h3><p>Scoped folders, preview + one-tap confirm, Trash-only deletes, undo, and a scanner gating all forged code.</p></div>
     </div>
   </section>
 
-  <section id="run">
-    <h2>RUN IT (LOCAL)</h2>
+  <section class="reveal" id="run">
+    <div class="eyebrow">GET STARTED</div>
+    <div class="h2">Run it in two minutes.</div>
     <pre>git clone https://github.com/rithick007/jarvis
 cd jarvis
-cp .env.example .env      # add one free key (Groq is enough)
-./run.sh                  # opens http://127.0.0.1:8000</pre>
+cp .env.example .env      <span class="dim"># add one free key (Groq is enough)</span>
+./run.sh                  <span class="dim"># opens http://127.0.0.1:8000</span></pre>
     <ol class="steps">
       <li>Grab a free key — Groq, Cerebras, or OpenRouter. More keys = more uptime.</li>
       <li><code>./run.sh</code> installs everything, builds the HUD, and opens it.</li>
-      <li>Click <strong>Start Talking</strong> and say "what's new in AI" or "open Spotify".</li>
+      <li>Hit <b>Start Talking</b> and say "what's new in AI" or "open Spotify".</li>
     </ol>
-    <p class="note">This is a <strong>local</strong> assistant: it controls your own Mac and runs on your machine, so it isn't a public web app — this page is the showcase, the agent lives on your computer.</p>
+    <p class="note">This is a <b>local</b> assistant: it controls your own Mac and runs on your machine, so it isn't a public web app — this page is the showcase, the agent lives on your computer.</p>
   </section>
 
-  <footer>
-    <a href="https://github.com/rithick007/jarvis">github.com/rithick007/jarvis</a>
-  </footer>
+  <footer><a href="https://github.com/rithick007/jarvis">github.com/rithick007/jarvis</a></footer>
 </div>
+
+<script>
+/* ---- 3D particle reactor (canvas point cloud + rotating arc rings) ---- */
+(function(){
+  const cv=document.getElementById("reactor"),ctx=cv.getContext("2d");
+  const dpr=Math.min(devicePixelRatio||1,2),S=340;cv.width=S*dpr;cv.height=S*dpr;ctx.scale(dpr,dpr);
+  const c=S/2,R=S*0.30,N=560,pts=[],g=Math.PI*(3-Math.sqrt(5));
+  for(let i=0;i<N;i++){const y=1-(i/(N-1))*2,r=Math.sqrt(1-y*y),t=g*i;pts.push([Math.cos(t)*r,y,Math.sin(t)*r]);}
+  let mx=0,my=0,tmx=0,tmy=0;
+  addEventListener("pointermove",e=>{tmx=(e.clientX/innerWidth-.5)*.6;tmy=(e.clientY/innerHeight-.5)*.6;});
+  const arc=(rad,a0,a1,w,col,al)=>{ctx.beginPath();ctx.arc(c,c,rad,a0,a1);ctx.strokeStyle=col;ctx.globalAlpha=al;ctx.lineWidth=w;ctx.shadowColor=col;ctx.shadowBlur=12;ctx.stroke();ctx.shadowBlur=0;ctx.globalAlpha=1;};
+  let t=0;
+  function frame(){
+    t+=0.005;mx+=(tmx-mx)*.05;my+=(tmy-my)*.05;
+    ctx.clearRect(0,0,S,S);
+    // central glow
+    const breathe=1+0.05*Math.sin(t*3.2);
+    const gr=ctx.createRadialGradient(c,c,0,c,c,R*1.7*breathe);
+    gr.addColorStop(0,"rgba(243,234,255,.5)");gr.addColorStop(.35,"rgba(168,85,247,.22)");gr.addColorStop(1,"rgba(5,3,8,0)");
+    ctx.fillStyle=gr;ctx.fillRect(0,0,S,S);
+    // rotating arc rings
+    ctx.save();ctx.translate(c,c);ctx.rotate(t*0.6);ctx.translate(-c,-c);
+    arc(R*1.5,0.2,2.0,2.2,"#a855f7",.85);arc(R*1.5,2.6,4.1,2.2,"#e879f9",.7);arc(R*1.5,4.5,6.0,2.2,"#a855f7",.8);ctx.restore();
+    ctx.save();ctx.translate(c,c);ctx.rotate(-t*0.9);ctx.translate(-c,-c);
+    arc(R*1.28,0.4,2.7,1.4,"#c084fc",.55);arc(R*1.28,3.2,5.5,1.4,"#c084fc",.55);ctx.restore();
+    // particle sphere
+    const sy=Math.sin(t+mx),cyr=Math.cos(t+mx),sx=Math.sin(t*0.4+my),cxr=Math.cos(t*0.4+my);
+    for(const[px,py,pz]of pts){
+      let x=px*cyr-pz*sy,z=px*sy+pz*cyr,y=py*cxr-z*sx;z=py*sx+z*cxr;
+      const persp=1.7/(1.7+z),X=c+x*R*persp,Y=c+y*R*persp,depth=(z+1)/2;
+      const a=0.15+depth*0.85,rr=(0.5+depth*1.8);
+      ctx.beginPath();ctx.arc(X,Y,rr,0,6.283);
+      const col=depth>0.55?"243,234,255":"192,132,252";
+      ctx.fillStyle="rgba("+col+","+a+")";
+      if(depth>0.8){ctx.shadowBlur=6;ctx.shadowColor="#e879f9";}else ctx.shadowBlur=0;
+      ctx.fill();
+    }
+    ctx.shadowBlur=0;
+    // bright core
+    ctx.beginPath();ctx.arc(c,c,(R*0.10)*breathe,0,6.283);ctx.fillStyle="#fff";ctx.shadowColor="#e879f9";ctx.shadowBlur=28;ctx.fill();ctx.shadowBlur=0;
+    requestAnimationFrame(frame);
+  }
+  frame();
+})();
+
+/* ---- skill-forge typewriter ---- */
+(function(){
+  const el=document.getElementById("forge");
+  const seq=[
+    {c:"you",t:"jarvis, learn to archive last month's invoices"},
+    {c:"sys",t:"✎ forging skill — generating code…"},
+    {c:"sys",t:"✓ AST safety scan passed   ✓ sandbox test passed"},
+    {c:"dim",t:"saved → skills/learned/archive_invoices.py"},
+    {c:"jv",t:"Done, sir. That's yours now — say the word anytime."},
+    {c:"dim",t:"— it's a permanent skill. every install is different. —"},
+  ];
+  let li=0,ci=0,lines=[];
+  function tick(){
+    if(li>=seq.length){setTimeout(()=>{el.innerHTML="";li=0;ci=0;lines=[];tick();},3600);return;}
+    const cur=seq[li];
+    if(ci===0)lines.push('<div class="line '+cur.c+'">'+(cur.c==="you"?"› ":"")+'</div>');
+    ci++;
+    const shown=cur.t.slice(0,ci);
+    lines[lines.length-1]='<div class="line '+cur.c+'">'+(cur.c==="you"?"› ":"")+shown+(li===seq.length-1||ci<cur.t.length?'<span class="cursor"></span>':'')+'</div>';
+    el.innerHTML=lines.join("");
+    el.parentElement.scrollTop=9999;
+    if(ci<cur.t.length)setTimeout(tick,28+Math.random()*30);
+    else{lines[lines.length-1]=lines[lines.length-1].replace('<span class="cursor"></span>','');li++;ci=0;setTimeout(tick,520);}
+  }
+  tick();
+})();
+
+/* ---- reveal on scroll + card spotlight ---- */
+(function(){
+  const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add("in");}),{threshold:.12});
+  document.querySelectorAll(".reveal").forEach(s=>io.observe(s));
+  document.querySelectorAll(".card").forEach(card=>card.addEventListener("pointermove",e=>{
+    const r=card.getBoundingClientRect();card.style.setProperty("--mx",(e.clientX-r.left)+"px");card.style.setProperty("--my",(e.clientY-r.top)+"px");
+  }));
+})();
+</script>
 </body>
 </html>
