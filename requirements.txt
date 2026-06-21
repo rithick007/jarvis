@@ -1,0 +1,27 @@
+# Jarvis dependencies — install with: pip install -r requirements.txt
+# (Legacy local-voice / Textual-TUI deps were retired; that code now lives in legacy/.)
+
+# --- web app + backend ---
+fastapi>=0.110           # the local web backend
+uvicorn[standard]>=0.29  # ASGI server that runs FastAPI
+websockets>=12.0         # WebSocket transport (chat + Gemini Live relay)
+openai>=1.30             # one client for BOTH Groq & Gemini (OpenAI-compatible)
+python-dotenv>=1.0       # load API keys from .env
+google-genai>=0.3        # Gemini Live realtime voice (optional, needs a live key)
+
+# --- skills + safety + memory ---
+ollama>=0.3.0            # local embeddings for long-term memory search
+numpy>=1.26              # cosine similarity for memory/doc search
+rich>=13.0               # console rendering in the safety layer
+send2trash>=1.8.0        # safe deletes — Trash, never hard-delete
+psutil>=5.9              # system vitals: CPU, RAM, disk, battery
+pypdf>=4.0               # extract text from PDFs for document search
+
+# --- news + tech feeds ---
+feedparser>=6.0          # parse RSS/Atom (news, Reddit, arXiv)
+httpx>=0.27              # HTTP client for feeds, markets, APIs
+
+# --- macOS laptop control (Accessibility tree) ---
+pyobjc-framework-Cocoa>=10.0
+pyobjc-framework-ApplicationServices>=10.0
+pyobjc-framework-Quartz>=10.0

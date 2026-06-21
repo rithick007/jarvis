@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
+  "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  com.jarvis.server.plist — runs the Jarvis web app in the background.
+
+  Starts at login and restarts if it ever crashes, so Jarvis is always live
+  at http://127.0.0.1:8000 without running any command.
+
+  Install with ./install_service.sh (which fills in your real paths and loads
+  it). This file in the repo is the template; the active copy lives in
+  ~/Library/LaunchAgents/com.jarvis.server.plist.
+-->
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.jarvis.server</string>
+
+    <key>ProgramArguments</key>
+    <array>
+        <string>__JARVIS_DIR__/venv/bin/python</string>
+        <string>-m</string>
+        <string>uvicorn</string>
+        <string>server:app</string>
+        <string>--host</string>
+        <string>127.0.0.1</string>
+        <string>--port</string>
+        <string>8000</string>
+    </array>
+
+    <key>WorkingDirectory</key>
+    <string>__JARVIS_DIR__</string>
+
+    <key>RunAtLoad</key>
+    <true/>
+
+    <key>KeepAlive</key>
+    <true/>
+
+    <key>StandardOutPath</key>
+    <string>__JARVIS_DIR__/logs/server.log</string>
+    <key>StandardErrorPath</key>
+    <string>__JARVIS_DIR__/logs/server.log</string>
+</dict>
+</plist>

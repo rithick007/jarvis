@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>J.A.R.V.I.S — the AI agent that writes its own skills</title>
+<meta name="description" content="A private, local, voice-driven macOS AI agent with a film-grade HUD, real laptop control, live world/tech intelligence, and a Self-Growing Skill Forge.">
+<style>
+  :root{--bg:#050308;--ink:#cbb7e6;--bright:#f3eaff;--acc:#a855f7;--acc2:#c084fc;--line:rgba(168,85,247,.22)}
+  *{box-sizing:border-box;margin:0}
+  body{background:radial-gradient(1100px 760px at 50% -8%,#1a0b2e,#0b0616 46%,#050308 82%) fixed;color:var(--ink);font-family:ui-monospace,"JetBrains Mono",Menlo,monospace;line-height:1.6;-webkit-font-smoothing:antialiased}
+  .grid{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.25;background-image:linear-gradient(rgba(168,85,247,.1) 1px,transparent 1px),linear-gradient(90deg,rgba(168,85,247,.1) 1px,transparent 1px);background-size:46px 46px;mask-image:radial-gradient(circle at 50% 30%,#000 24%,transparent 78%)}
+  .wrap{position:relative;z-index:1;max-width:920px;margin:0 auto;padding:0 22px}
+  header{text-align:center;padding:90px 0 50px}
+  .badge{display:inline-block;border:1px solid var(--line);border-radius:999px;padding:6px 14px;font-size:12px;letter-spacing:.2em;color:var(--acc2);margin-bottom:24px}
+  h1{font-size:clamp(34px,6vw,60px);color:var(--bright);letter-spacing:.06em;line-height:1.1;margin-bottom:14px;font-weight:700}
+  .tag{font-size:clamp(15px,2.4vw,20px);color:var(--ink);max-width:680px;margin:0 auto 30px}
+  .cta{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+  .btn{border:1px solid var(--acc);border-radius:10px;padding:12px 22px;color:#0a0414;background:linear-gradient(180deg,var(--acc2),var(--acc));text-decoration:none;font-weight:700;letter-spacing:.05em;box-shadow:0 0 24px rgba(168,85,247,.4)}
+  .btn.ghost{background:rgba(20,10,34,.6);color:var(--bright);box-shadow:none}
+  .orb{width:200px;height:200px;margin:48px auto 0;border-radius:50%;background:radial-gradient(circle at 50% 45%,#f3eaff,var(--acc2) 32%,var(--acc) 60%,transparent 75%);box-shadow:0 0 90px rgba(168,85,247,.55);animation:breathe 4s ease-in-out infinite}
+  @keyframes breathe{0%,100%{transform:scale(1);opacity:.92}50%{transform:scale(1.05);opacity:1}}
+  section{padding:46px 0;border-top:1px solid var(--line)}
+  h2{color:var(--bright);font-size:13px;letter-spacing:.34em;margin-bottom:22px;font-weight:600}
+  .grid3{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
+  .card{border:1px solid var(--line);border-radius:14px;background:rgba(20,10,34,.45);backdrop-filter:blur(8px);padding:18px 20px}
+  .card h3{color:var(--acc2);font-size:15px;margin-bottom:8px}
+  .card p{font-size:14px;color:var(--ink)}
+  .star{border-color:rgba(168,85,247,.5);box-shadow:0 0 30px rgba(168,85,247,.18)}
+  pre{border:1px solid var(--line);border-radius:12px;background:rgba(2,7,10,.65);padding:16px;overflow:auto;color:var(--bright);font-size:13px}
+  .steps{counter-reset:s;list-style:none;padding:0}
+  .steps li{position:relative;padding:10px 0 10px 38px;font-size:14px}
+  .steps li::before{counter-increment:s;content:counter(s);position:absolute;left:0;top:8px;width:24px;height:24px;border-radius:50%;border:1px solid var(--acc);color:var(--acc2);display:grid;place-items:center;font-size:12px}
+  footer{text-align:center;padding:50px 0;color:#7a6a9c;font-size:13px}
+  a{color:var(--acc2)}
+  .note{font-size:13px;color:#9d86c4;border-left:2px solid var(--acc);padding-left:12px;margin-top:18px}
+</style>
+</head>
+<body>
+<div class="grid"></div>
+<div class="wrap">
+  <header>
+    <div class="badge">LOCAL · VOICE-DRIVEN · SELF-GROWING</div>
+    <h1>J.A.R.V.I.S</h1>
+    <p class="tag">A private macOS AI agent with a film-grade HUD, real laptop control, live world &amp; tech intelligence — and the one thing no other Jarvis has: it <strong>writes its own new skills</strong>.</p>
+    <div class="cta">
+      <a class="btn" href="https://github.com/rithick007/jarvis">View on GitHub</a>
+      <a class="btn ghost" href="#run">Run it locally</a>
+    </div>
+    <div class="orb"></div>
+  </header>
+
+  <section>
+    <h2>WHAT MAKES IT DIFFERENT</h2>
+    <div class="grid3">
+      <div class="card star"><h3>★ Self-Growing Skill Forge</h3><p>Ask it to "learn to…" something it can't do. It writes the code, runs a deterministic safety scan + sandbox test, asks you to approve, then keeps the skill forever. Every install becomes unique.</p></div>
+      <div class="card"><h3>Real laptop control</h3><p>Opens and operates apps, controls volume/brightness/media, searches the web, and reads &amp; clicks any app through the macOS Accessibility tree — behind a tiered safety layer.</p></div>
+      <div class="card"><h3>Voice-first HUD</h3><p>A reactive command center: speak naturally, watch a live system log, and surface world news or the daily AI feed on demand.</p></div>
+      <div class="card"><h3>World &amp; tech intelligence</h3><p>Live global news, war/economy, Indian markets, plus a daily AI digest from Reddit, Hacker News, arXiv and YouTube — summarized by the model.</p></div>
+      <div class="card"><h3>Resilient free brain</h3><p>Rotates across Groq → Cerebras → OpenRouter → Gemini (all free tiers) with a browser fallback, so it keeps going when any provider throttles.</p></div>
+      <div class="card"><h3>Safe by construction</h3><p>Scoped folders, preview + one-tap confirm, Trash-only deletes, undo, and a static scanner gating every line of forged code.</p></div>
+    </div>
+  </section>
+
+  <section id="run">
+    <h2>RUN IT (LOCAL)</h2>
+    <pre>git clone https://github.com/rithick007/jarvis
+cd jarvis
+cp .env.example .env      # add one free key (Groq is enough)
+./run.sh                  # opens http://127.0.0.1:8000</pre>
+    <ol class="steps">
+      <li>Grab a free key — Groq, Cerebras, or OpenRouter. More keys = more uptime.</li>
+      <li><code>./run.sh</code> installs everything, builds the HUD, and opens it.</li>
+      <li>Click <strong>Start Talking</strong> and say "what's new in AI" or "open Spotify".</li>
+    </ol>
+    <p class="note">This is a <strong>local</strong> assistant: it controls your own Mac and runs on your machine, so it isn't a public web app — this page is the showcase, the agent lives on your computer.</p>
+  </section>
+
+  <footer>
+    <a href="https://github.com/rithick007/jarvis">github.com/rithick007/jarvis</a>
+  </footer>
+</div>
+</body>
+</html>

@@ -1,0 +1,31 @@
+# secrets — NEVER commit API keys
+.env
+
+# python
+venv/
+__pycache__/
+*.pyc
+
+# web build / deps / heavy assets
+web/node_modules/
+web/dist/
+web/static/
+*.glb
+
+# archived prototypes (kept locally, not in the repo)
+legacy/
+models/
+
+# user / runtime data
+jarvis_config.json
+jarvis_index.db
+jarvis_actions.jsonl
+training_data.jsonl
+drafts/
+sandbox/
+logs/
+.DS_Store
+.gstack/
+
+# local agent settings
+.claude/
