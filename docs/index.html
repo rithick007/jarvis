@@ -47,8 +47,9 @@
   .btn{border:1px solid var(--acc);border-radius:11px;padding:13px 24px;color:#0a0414;background:linear-gradient(180deg,var(--acc2),var(--acc));text-decoration:none;font-weight:700;letter-spacing:.04em;box-shadow:0 0 26px rgba(var(--accrgb),.45);transition:transform .15s,box-shadow .15s}
   .btn:hover{transform:translateY(-2px);box-shadow:0 0 40px rgba(var(--accrgb),.6)}
   .btn.ghost{background:rgba(20,10,34,.6);color:var(--bright);box-shadow:none}.btn.ghost:hover{border-color:var(--acc3)}
-  .scrollhint{position:absolute;bottom:26px;left:50%;transform:translateX(-50%);color:#6b5a8c;font-size:11px;letter-spacing:.3em;animation:bob 2s ease-in-out infinite}
-  @keyframes bob{50%{transform:translate(-50%,6px)}}
+  .scrollhint{position:absolute;bottom:22px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:9px;color:#7a6a9c;font-size:10px;letter-spacing:.34em}
+  .scrollhint .chev{width:16px;height:16px;border-right:2px solid var(--acc2);border-bottom:2px solid var(--acc2);animation:bob 1.6s ease-in-out infinite}
+  @keyframes bob{0%,100%{transform:rotate(45deg) translate(-2px,-2px);opacity:.45}50%{transform:rotate(45deg) translate(2px,2px);opacity:1}}
 
   .reveal{opacity:0;transform:translateY(22px);transition:opacity .7s,transform .7s}
   .reveal.in{opacity:1;transform:none}
@@ -117,7 +118,7 @@
       <a class="btn" href="https://github.com/rithick007/jarvis">View on GitHub</a>
       <a class="btn ghost" href="#run">Run it locally</a>
     </div>
-    <div class="scrollhint">▼ SCROLL</div>
+    <div class="scrollhint"><span>SCROLL</span><span class="chev"></span></div>
   </header>
 
   <section class="reveal">
